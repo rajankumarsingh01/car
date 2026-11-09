@@ -2,17 +2,16 @@ import { useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF, useScroll } from "@react-three/drei";
 import * as THREE from "three";
-import { PHASES, FADE_MATERIALS, EXPLODE, OVERRIDES } from "../config/stages";
+import { FADE_MATERIALS, EXPLODE, OVERRIDES } from "../config/stages";
+import { getTimeline } from "../utils/timeline";
+import { config } from "../utils/configStore";
 
 const MODEL_URL = "/models/car.glb";
 const TARGET_LENGTH = 4; // car ki lambai (scene units)
 const HIDE_COAT_LAYER = true;
 
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
-const seg = (v, [a, b]) => {
-  const t = clamp01((v - a) / (b - a));
-  return t * t * (3 - 2 * t);
-};
+const tmpColor = new THREE.Color();
 
 export default function Car() {
   const { scene } = useGLTF(MODEL_URL);
@@ -31,7 +30,7 @@ export default function Car() {
   }, [scene]);
 
   // har mesh ka explode target aur fade hone wale materials taiyar karo
-  const { parts, fades, edges } = useMemo(() => {
+  const { parts, fades, edges, paintMats, rimMats } = useMemo(() => {
     scene.updateMatrixWorld(true);
     const sceneBox = new THREE.Box3().setFromObject(scene);
     const size = sceneBox.getSize(new THREE.Vector3());
@@ -132,6 +131,7 @@ export default function Car() {
           base: i.m.opacity,
           target,
           cc: "clearcoat" in i.m ? i.m.clearcoat : 0,
+          glass: i.m.name === "glass", // shishe interior chapter mein bhi saaf hote hain
         });
       }
     });
@@ -154,21 +154,38 @@ export default function Car() {
       }
     });
 
+    // configurator: paint aur rim ke materials (original rang yaad rakho, stock par wapas aane ke liye)
+    const seenColor = new Set();
+    const paintMats = [];
+    const rimMats = [];
+    info.forEach((i) => {
+      if (seenColor.has(i.m) || !i.m.color) return;
+      seenColor.add(i.m);
+      if (i.mat === "paint") paintMats.push({ m: i.m, orig: i.m.color.clone() });
+      if (i.mat === "930_rim") rimMats.push({ m: i.m, orig: i.m.color.clone() });
+    });
+
     console.log("Explode parts:", parts.length, "| fade materials:", fades.length, "| edges:", edges.length);
-    return { parts, fades, edges };
+    return { parts, fades, edges, paintMats, rimMats };
   }, [scene]);
 
   useFrame(() => {
-    const o = scroll.offset;
-    const fade = seg(o, PHASES.fadeIn) * (1 - seg(o, PHASES.fadeOut));
-    const out = seg(o, PHASES.explodeOut) * (1 - seg(o, PHASES.explodeBack));
+    const t = getTimeline(scroll.offset);
 
-    parts.forEach((p) => p.o.position.lerpVectors(p.home, p.target, out));
-    edges.forEach((m) => (m.opacity = fade * 0.6));
+    parts.forEach((p) => p.o.position.lerpVectors(p.home, p.target, t.out));
+    edges.forEach((m) => (m.opacity = t.fade * 0.6));
+
+    // configurator ka rang dheere-dheere badalta hai (null = stock)
+    const tint = (list, hex) =>
+      list.forEach(({ m, orig }) => m.color.lerp(hex ? tmpColor.set(hex) : orig, 0.12));
+    tint(paintMats, config.paint);
+    tint(rimMats, config.rim);
+
     fades.forEach((f) => {
-      f.m.opacity = THREE.MathUtils.lerp(f.base, f.target, fade);
-      if ("clearcoat" in f.m) f.m.clearcoat = f.cc * (1 - fade);
-      f.m.depthWrite = fade < 0.05;
+      const level = f.glass ? t.glass : t.fade;
+      f.m.opacity = THREE.MathUtils.lerp(f.base, f.target, level);
+      if ("clearcoat" in f.m) f.m.clearcoat = f.cc * (1 - level);
+      f.m.depthWrite = level < 0.05;
     });
   });
 

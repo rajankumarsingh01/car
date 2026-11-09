@@ -1,0 +1,400 @@
+/* ============================================================
+   Phase 2: content chapters (design, powertrain, interior, heritage, lineup)
+   overlay.css ke baad load hota hai. --p = us beat ke andar scroll ka hissa (0 se 1),
+   OverlaySync set karta hai.
+   ============================================================ */
+
+/* text beat ko right side par rakhna (design: wheel shot) */
+.beat.right {
+  left: auto;
+  right: clamp(20px, 6vw, 90px);
+  text-align: right;
+}
+.beat.right .sub {
+  margin-left: auto;
+}
+
+/* interior: chhoti feature list */
+.points {
+  list-style: none;
+  margin-top: 1.3rem;
+  display: grid;
+  gap: 0.6rem;
+}
+.points li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.9rem;
+  height: 1px;
+  background: var(--gold);
+}
+
+/* glass panel (powertrain + cards) */
+.power-panel,
+.card {
+  background: rgba(10, 12, 16, 0.55);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid #ffffff1a;
+}
+
+/* ---------- powertrain ---------- */
+.beat.power {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  max-width: none;
+}
+.power-head {
+  position: absolute;
+  left: clamp(20px, 6vw, 90px);
+  bottom: clamp(60px, 12vh, 130px);
+  max-width: min(34ch, 86vw);
+}
+.power-panel {
+  position: absolute;
+  right: clamp(20px, 6vw, 90px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(440px, 40vw);
+  padding: 1.2rem 1.4rem 1rem;
+}
+.spec-table {
+  margin: 0;
+}
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid #ffffff14;
+}
+.spec-row dt {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.spec-row dd {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--ink);
+  text-align: right;
+}
+.chart {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  overflow: visible;
+}
+.chart .grid {
+  stroke: #ffffff12;
+}
+.chart .axis {
+  stroke: #ffffff30;
+}
+.chart .tick {
+  fill: var(--dim);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+.chart .curve {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  /* line scroll ke saath "draw" hoti hai */
+  stroke-dashoffset: calc(1 - clamp(0, var(--p, 0) * 2.6, 1));
+}
+.chart .power .curve {
+  stroke: var(--gold-hi);
+}
+.chart .torque .curve {
+  stroke: #8fb4d9;
+}
+.chart .peak {
+  opacity: clamp(0, calc((var(--p, 0) - 0.4) * 4), 1);
+}
+.chart .power .peak circle {
+  fill: var(--gold-hi);
+}
+.chart .torque .peak circle {
+  fill: #8fb4d9;
+}
+.chart .peak text {
+  fill: var(--ink);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 0.6rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.chart-legend .lg::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  margin-right: 7px;
+  vertical-align: middle;
+}
+.chart-legend .lg.power::before {
+  background: var(--gold-hi);
+}
+.chart-legend .lg.torque::before {
+  background: #8fb4d9;
+}
+.chart-legend .lg.note {
+  margin-left: auto;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  font-weight: 400;
+  color: var(--dim);
+}
+.chart-legend .lg.note::before {
+  display: none;
+}
+
+/* ---------- heritage timeline ---------- */
+.beat.tline {
+  left: 0;
+  right: 0;
+  max-width: none;
+  padding: 0 clamp(20px, 6vw, 90px);
+}
+.beat.tline h2 {
+  font-size: clamp(1.8rem, 3.6vw, 3rem);
+}
+.tl-track {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  margin-top: 1.6rem;
+  border-top: 1px solid #c9a96e59;
+}
+.tl-item {
+  /* har item apni baari par aata hai (--i = uska number) */
+  --on: clamp(0, calc((var(--p, 0) * 1.15 * var(--n) - var(--i)) * 1.6), 1);
+  position: relative;
+  padding: 1.1rem 1rem 0 0;
+  opacity: var(--on);
+  transform: translateY(calc((1 - var(--on)) * 12px));
+}
+.tl-item::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.tl-year {
+  display: block;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+  line-height: 1;
+}
+.tl-text {
+  display: block;
+  margin-top: 0.5rem;
+  max-width: 22ch;
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--mute);
+}
+
+/* ---------- lineup cards ---------- */
+.beat.cards {
+  left: 0;
+  right: 0;
+  max-width: none;
+  padding: 0 clamp(20px, 6vw, 90px);
+}
+.beat.cards h2 {
+  font-size: clamp(1.8rem, 3.6vw, 3rem);
+}
+.card-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.6vw, 24px);
+  margin-top: 1.4rem;
+}
+.card {
+  --on: clamp(0, calc(var(--p, 0) * 6 - var(--i) * 0.5), 1);
+  pointer-events: auto;
+  position: relative;
+  padding: 1.3rem 1.4rem 0.9rem;
+  opacity: var(--on);
+  transform: translateY(calc((1 - var(--on)) * 14px));
+  transition: transform 0.3s, border-color 0.3s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  border-color: #c9a96e80;
+}
+.card.featured {
+  border-color: #c9a96e66;
+}
+.card-badge {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.2rem;
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.card h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  line-height: 1.05;
+}
+.card h3 small {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.card-tag {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--mute);
+}
+.card-specs {
+  margin: 1rem 0 0;
+}
+.card-specs div {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0;
+  border-top: 1px solid #ffffff14;
+}
+.card-specs dt {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.card-specs dd {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 300;
+}
+.card-line {
+  display: none;
+}
+
+/* ---------- portrait / mobile (9:16) ---------- */
+@media (max-aspect-ratio: 1/1) {
+  .beat.right {
+    left: 20px;
+    right: 20px;
+    text-align: left;
+  }
+  .beat.right .sub {
+    margin-left: 0;
+  }
+
+  /* powertrain: heading upar, panel neeche */
+  .power-head {
+    left: 20px;
+    right: 20px;
+    top: 11vh;
+    bottom: auto;
+    max-width: none;
+  }
+  .power-head .sub {
+    display: none;
+  }
+  .power-panel {
+    left: 20px;
+    right: 20px;
+    top: auto;
+    bottom: 6vh;
+    width: auto;
+    transform: none;
+    padding: 0.8rem 1rem 0.7rem;
+  }
+  .spec-row {
+    padding: 0.4rem 0;
+  }
+  .spec-row:nth-child(n + 5) {
+    display: none;
+  }
+  .chart {
+    margin-top: 0.6rem;
+  }
+
+  /* heritage: 2 column */
+  .beat.tline {
+    padding: 0 20px;
+  }
+  .tl-track {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 0.4rem;
+  }
+  .tl-text {
+    font-size: 0.68rem;
+    max-width: none;
+  }
+
+  /* lineup: ek line wale chhote cards */
+  .beat.cards {
+    padding: 0 20px;
+  }
+  .card-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .card {
+    padding: 0.7rem 1rem;
+  }
+  .card-badge,
+  .card-tag,
+  .card-specs {
+    display: none;
+  }
+  .card h3 small {
+    margin-bottom: 0.25rem;
+  }
+  .card-line {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.7rem;
+    color: var(--mute);
+  }
+}

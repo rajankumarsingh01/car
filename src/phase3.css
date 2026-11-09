@@ -1,0 +1,191 @@
+/* ============================================================
+   Phase 3: navbar tools, configurator, custom cursor, reel mode
+   chapters.css ke baad load hota hai.
+   NOTE: overlay.css mein ".ov button" ka reset hai, isliye yahan ".ov .xyz" (zyada specificity) likha hai.
+   ============================================================ */
+
+/* ---------- navbar: 8 links + tools ---------- */
+.nav nav {
+  gap: clamp(10px, 1.7vw, 30px);
+}
+.nav nav button {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+}
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ov .tool {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border: 1px solid #ffffff1f;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+}
+.ov .tool:hover,
+.ov .tool[aria-pressed="true"] {
+  color: var(--gold-hi);
+  border-color: #c9a96e80;
+}
+.ov .tool.nav-cta {
+  border-color: var(--gold);
+  color: var(--bg);
+  background: var(--gold);
+}
+.ov .tool.nav-cta:hover {
+  background: var(--gold-hi);
+  border-color: var(--gold-hi);
+  color: var(--bg);
+}
+@media (max-width: 1280px) {
+  .ov .tool.nav-cta {
+    display: none;
+  }
+}
+
+/* ---------- configurator ---------- */
+.config-panel {
+  width: min(380px, 38vw);
+}
+.swatch-group + .swatch-group {
+  margin-top: 1.3rem;
+}
+.swatch-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.swatch-label b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.ov .swatch {
+  pointer-events: auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--c);
+  border: 1px solid #ffffff40;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.ov .swatch.stock {
+  background: linear-gradient(135deg, #d8d4cc 50%, #4a4a4a 50%);
+}
+.ov .swatch:hover {
+  transform: scale(1.14);
+}
+.ov .swatch.on {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--gold);
+}
+.config-note {
+  margin-top: 1.2rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+
+/* ---------- custom cursor ---------- */
+.cursor {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+body.has-cursor .cursor {
+  display: block;
+}
+body.has-cursor,
+body.has-cursor * {
+  cursor: none !important;
+}
+.cursor.dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.cursor.ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid #c9a96e99;
+  border-radius: 50%;
+  transition: width 0.25s, height 0.25s, margin 0.25s, background 0.25s;
+}
+.cursor.ring.hot {
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  background: #c9a96e1f;
+}
+
+/* hover: buttons halke uthte hain */
+.cta a,
+.cta button {
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+}
+.cta a:hover,
+.cta button:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------- reel mode: sirf car + text dikhe ---------- */
+body.reel .nav,
+body.reel .progress,
+body.reel .hint,
+body.reel .foot,
+body.reel .cursor {
+  display: none !important;
+}
+body.reel,
+body.reel * {
+  cursor: none !important;
+}
+
+/* ---------- portrait / mobile (9:16) ---------- */
+@media (max-aspect-ratio: 1/1) {
+  .nav nav {
+    display: none;
+  }
+  .ov .tool {
+    padding: 8px 10px;
+  }
+  .ov .tool span {
+    display: none;
+  }
+  .ov .tool.nav-cta {
+    display: inline-flex;
+    font-size: 0.6rem;
+  }
+  .config-panel {
+    width: auto;
+  }
+  .swatches {
+    gap: 10px;
+  }
+  .config-note {
+    display: none;
+  }
+}
