@@ -7,10 +7,6 @@ import { updateSound } from "../utils/sound";
 
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-
-// Reel clip: URL se chuno, jaise ?clip=engine (nahi diya to REEL.default)
-const clipName = new URLSearchParams(window.location.search).get("clip");
-const CLIP = REEL.clips[clipName] || REEL.clips[REEL.default];
 const FADE = pg(0.4); // fade ki chaudai (0.4 screen scroll)
 
 // Scroll ke hisaab se overlay ko seedha DOM mein badalta hai (React state nahi)
@@ -52,8 +48,7 @@ export default function OverlaySync() {
           stopReel();
         } else {
           document.body.classList.add("reel");
-          const max = box.scrollHeight - box.clientHeight;
-          box.scrollTo({ top: pg(CLIP.from) * max, behavior: "instant" });
+          box.scrollTo({ top: 0, behavior: "instant" });
           reel.current = { on: true, wait: REEL.startDelay };
         }
         return;
@@ -77,15 +72,6 @@ export default function OverlaySync() {
     };
 
     document.addEventListener("click", onClick);
-
-    // QA ke liye: ?at=8.5 se seedha 8.5 screen neeche kood jao
-    const at = parseFloat(new URLSearchParams(window.location.search).get("at"));
-    if (!Number.isNaN(at)) {
-      setTimeout(() => {
-        const max = box.scrollHeight - box.clientHeight;
-        box.scrollTo({ top: pg(at) * max, behavior: "instant" });
-      }, 600);
-    }
     document.addEventListener("wheel", onWheel, { passive: true });
     document.addEventListener("keydown", onKey);
     return () => {
@@ -109,12 +95,7 @@ export default function OverlaySync() {
       } else {
         const box = scroll.el;
         const max = box.scrollHeight - box.clientHeight;
-        const end = pg(CLIP.to) * max;
-        const speed = ((pg(CLIP.to) - pg(CLIP.from)) * max) / CLIP.seconds;
-        const next = Math.min(end, box.scrollTop + speed * Math.min(dt, 0.1));
-        box.scrollTo({ top: next, behavior: "instant" });
-        // clip khatam: scroll ruk jata hai, UI chhupa rehta hai (Esc se wapas)
-        if (next >= end) reel.current.on = false;
+        box.scrollTo({ top: Math.min(max, box.scrollTop + (max / REEL.seconds) * dt), behavior: "instant" });
       }
     }
 

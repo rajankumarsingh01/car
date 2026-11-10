@@ -74,18 +74,7 @@ export const CONFIG = {
 };
 
 // Reel mode: seconds = poora page kitne second mein scroll hoga, startDelay = shuru hone se pehle ruk
-export const REEL = {
-  startDelay: 2,
-  default: "teardown",
-  // from/to = page (screen) number jahan se jahan tak scroll hoga, seconds = clip ki lambai
-  // Use: http://localhost:5173/?clip=teardown (ya design, engine, full)
-  clips: {
-    teardown: { from: 5.5, to: 11.5, seconds: 28 },
-    design: { from: 2.2, to: 5.3, seconds: 18 },
-    engine: { from: 8.0, to: 10.4, seconds: 12 },
-    full: { from: 0, to: 29, seconds: 75 },
-  },
-};
+export const REEL = { seconds: 70, startDelay: 2 };
 
 // Har stage ka text. range = scroll offset (0 se 1) jab tak dikhega
 // type: "hero" | "stats" | "powertrain" | "timeline" | "cards" | "config" | "cta" | "text" (default) | "finale"
