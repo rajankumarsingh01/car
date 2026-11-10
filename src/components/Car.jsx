@@ -72,7 +72,7 @@ export default function Car() {
     const parts = info.map((i) => {
       const d = i.c.clone().sub(carCenter);
       const dir = new THREE.Vector3();
-      let dist = EXPLODE.part;
+      let dist;
       const ov = OVERRIDES[i.o.name];
 
       if (ov) {

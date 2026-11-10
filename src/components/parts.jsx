@@ -1,3 +1,6 @@
+/* eslint-disable react-refresh/only-export-components, react-hooks/use-memo, react-hooks/exhaustive-deps */
+
+
 import { useMemo } from "react";
 import * as THREE from "three";
 
